@@ -23,10 +23,10 @@ export const authController = {
       // Create unverified user
       await userService.createUser({ name, email, password });
 
-      // Generate and send OTP
+      // Generate and send OTP (Asynchronously for speed)
       const otp = otpService.generateOtp();
       await otpService.saveOtp(email, otp, 'registration');
-      await emailService.sendRegistrationOtp(email, otp);
+      emailService.sendRegistrationOtp(email, otp);
 
       res.status(200).json({
         message: 'Registration initiated. Please verify your email.',
@@ -103,10 +103,10 @@ export const authController = {
 
       // Check if verified
       if (!user.isVerified) {
-        // Send new OTP
+        // Send new OTP (Asynchronously)
         const otp = otpService.generateOtp();
         await otpService.saveOtp(email, otp, 'registration');
-        await emailService.sendRegistrationOtp(email, otp);
+        emailService.sendRegistrationOtp(email, otp);
 
         res.status(403).json({
           message: 'Please verify your email first',
@@ -150,10 +150,10 @@ export const authController = {
         return;
       }
 
-      // Generate and send OTP
+      // Generate and send OTP (Asynchronously)
       const otp = otpService.generateOtp();
       await otpService.saveOtp(email, otp, 'login');
-      await emailService.sendLoginOtp(email, otp);
+      emailService.sendLoginOtp(email, otp);
 
       res.status(200).json({ message: 'OTP sent to your email' });
     } catch (error) {
@@ -219,10 +219,10 @@ export const authController = {
         return;
       }
 
-      // Generate and send OTP
+      // Generate and send OTP (Asynchronously)
       const otp = otpService.generateOtp();
       await otpService.saveOtp(email, otp, 'password-reset');
-      await emailService.sendPasswordResetOtp(email, otp);
+      emailService.sendPasswordResetOtp(email, otp);
 
       res.status(200).json({ message: 'Password reset OTP sent to your email' });
     } catch (error) {
@@ -304,13 +304,13 @@ export const authController = {
 
       switch (purpose) {
         case 'registration':
-          await emailService.sendRegistrationOtp(email, otp);
+          emailService.sendRegistrationOtp(email, otp);
           break;
         case 'login':
-          await emailService.sendLoginOtp(email, otp);
+          emailService.sendLoginOtp(email, otp);
           break;
         case 'password-reset':
-          await emailService.sendPasswordResetOtp(email, otp);
+          emailService.sendPasswordResetOtp(email, otp);
           break;
       }
 
